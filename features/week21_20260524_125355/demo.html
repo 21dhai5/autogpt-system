@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON Formatter Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <h1>JSON Formatter Demo</h1>
+      <p>下面展示一组示例输入与输出，帮助快速理解本工具的使用方式。</p>
+    </header>
+
+    <main class="workspace">
+      <section class="panel">
+        <div class="panel-title">示例输入</div>
+        <pre>{"name":"Alice","skills":["JavaScript","Python"],"active":true,"score":98}</pre>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">格式化输出</div>
+        <pre>{
+    "name": "Alice",
+    "skills": [
+        "JavaScript",
+        "Python"
+    ],
+    "active": true,
+    "score": 98
+}</pre>
+      </section>
+
+      <section class="panel feature-list">
+        <h2>使用步骤</h2>
+        <ol>
+          <li>打开 <strong>index.html</strong></li>
+          <li>将原始 JSON 粘贴到输入区</li>
+          <li>点击“格式化”或“压缩”按钮</li>
+          <li>查看输出结果并可一键复制</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON 格式化器与校验工具</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <h1>JSON 格式化器与校验工具</h1>
+      <p>一个纯前端 Web 实用工具，支持 JSON 格式化、压缩、校验、转义处理与示例加载。</p>
+    </header>
+
+    <main class="workspace">
+      <section class="panel controls-panel">
+        <div class="button-row">
+          <button id="formatBtn">格式化</button>
+          <button id="minifyBtn">压缩</button>
+          <button id="validateBtn">校验</button>
+          <button id="escapeBtn">字符串转义</button>
+          <button id="sampleBtn">加载示例</button>
+          <button id="copyBtn">复制结果</button>
+          <button id="clearBtn" class="secondary">清空</button>
+        </div>
+
+        <div class="option-row">
+          <label for="indentSize">缩进空格数</label>
+          <select id="indentSize">
+            <option value="2">2</option>
+            <option value="4" selected>4</option>
+            <option value="8">8</option>
+          </select>
+        </div>
+
+        <div id="status" class="status info">等待输入 JSON 内容。</div>
+      </section>
+
+      <section class="editor-grid">
+        <div class="panel">
+          <div class="panel-title">输入区</div>
+          <textarea id="inputJson" spellcheck="false" placeholder="请输入 JSON 内容或普通字符串..."></textarea>
+        </div>
+        <div class="panel">
+          <div class="panel-title">输出区</div>
+          <textarea id="outputJson" spellcheck="false" readonly placeholder="处理结果将显示在这里..."></textarea>
+        </div>
+      </section>
+
+      <section class="panel feature-list">
+        <h2>功能亮点</h2>
+        <ul>
+          <li>自动格式化 JSON，提升可读性</li>
+          <li>一键压缩为单行，方便网络传输与日志记录</li>
+          <li>即时校验 JSON 合法性并定位错误信息</li>
+          <li>将普通文本转换为 JSON 字符串字面量</li>
+          <li>内置示例，可用于快速演示与调试</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

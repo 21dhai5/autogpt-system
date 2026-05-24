@@ -1,0 +1,10 @@
+{
+  "name": "week21-json-formatter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Week 21 practical utility: JSON formatter web tool",
+  "scripts": {
+    "start": "python3 -m http.server 8000 -d .",
+    "test": "node -e \"const fs=require('fs');['index.html','app.js','styles.css','demo.html','blog.md','blog.html','package.json'].forEach(f=>{if(!fs.existsSync(f)) throw new Error(f+' missing')}); console.log('structure ok')\""
+  }
+}
