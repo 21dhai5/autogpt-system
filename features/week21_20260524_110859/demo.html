@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON格式化器 - Week 21</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-light: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #020617, #0f172a 45%, #111827);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    .hero {
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2.2rem;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    button, select {
+      border: 1px solid var(--border);
+      background: var(--panel-light);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    button.primary { background: var(--primary); color: #082f49; font-weight: 700; }
+    button.success { background: var(--success); color: #052e16; font-weight: 700; }
+    button.danger { background: var(--danger); color: white; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .panel {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    textarea, pre {
+      width: 100%;
+      min-height: 420px;
+      margin: 0;
+      padding: 16px;
+      border: 0;
+      resize: vertical;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .status {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--muted);
+    }
+    .status.ok { border-color: rgba(34, 197, 94, 0.5); color: #bbf7d0; }
+    .status.error { border-color: rgba(239, 68, 68, 0.5); color: #fecaca; }
+    .footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      textarea, pre { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>JSON 格式化器 / 校验器</h1>
+      <p>一个纯前端可运行的 Web 实用工具：支持 JSON 校验、格式化、压缩、转义、示例填充与一键复制，适合开发调试、接口联调和教学演示。</p>
+    </section>
+
+    <div class="toolbar">
+      <button class="primary" id="formatBtn">格式化</button>
+      <button id="minifyBtn">压缩</button>
+      <button id="escapeBtn">字符串转义</button>
+      <button id="sampleBtn">填充示例</button>
+      <button class="success" id="copyBtn">复制结果</button>
+      <button class="danger" id="clearBtn">清空</button>
+      <label>
+        缩进：
+        <select id="indentSelect">
+          <option value="2">2 spaces</option>
+          <option value="4" selected>4 spaces</option>
+          <option value="8">8 spaces</option>
+        </select>
+      </label>
+    </div>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <span>输入区</span>
+          <span>粘贴原始 JSON 或文本</span>
+        </div>
+        <textarea id="input" spellcheck="false" placeholder='例如：{"name":"AutoGPT","week":21,"features":["format","validate"]}'></textarea>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span>输出区</span>
+          <span>格式化结果 / 错误信息</span>
+        </div>
+        <pre id="output"></pre>
+      </div>
+    </section>
+
+    <div id="status" class="status">等待输入。你可以直接粘贴 JSON，然后点击“格式化”。</div>
+    <div class="footer">运行方式：直接打开本文件，或使用 <code>npm start</code> 启动本地静态服务。</div>
+  </div>
+
+  <script>
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const indentSelect = document.getElementById('indentSelect');
+
+    const sample = {
+      product: 'JSON Formatter',
+      version: '1.0.0',
+      week: 21,
+      features: ['validate', 'pretty print', 'minify', 'copy'],
+      metadata: {
+        author: 'AutoGPT',
+        createdAt: '2026-05-24',
+        commercialValue: true
+      }
+    };
+
+    function setStatus(message, type) {
+      status.textContent = message;
+      status.className = 'status' + (type ? ` ${type}` : '');
+    }
+
+    function tryParseJson(text) {
+      return JSON.parse(text);
+    }
+
+    function formatJson() {
+      try {
+        const parsed = tryParseJson(input.value);
+        const indent = Number(indentSelect.value);
+        output.textContent = JSON.stringify(parsed, null, indent);
+        setStatus('JSON 校验通过，已完成格式化。', 'ok');
+      } catch (error) {
+        output.textContent = error.message;
+        setStatus('JSON 格式错误，请检查输入内容。', 'error');
+      }
+    }
+
+    function minifyJson() {
+      try {
+        const parsed = tryParseJson(input.value);
+        output.textContent = JSON.stringify(parsed);
+        setStatus('JSON 已压缩为单行格式。', 'ok');
+      } catch (error) {
+        output.textContent = error.message;
+        setStatus('压缩失败：输入不是合法 JSON。', 'error');
+      }
+    }
+
+    function escapeString() {
+      const escaped = JSON.stringify(input.value);
+      output.textContent = escaped;
+      setStatus('已将输入文本转换为 JSON 安全字符串。', 'ok');
+    }
+
+    async function copyOutput() {
+      if (!output.textContent) {
+        setStatus('输出区为空，暂无可复制内容。', 'error');
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(output.textContent);
+        setStatus('结果已复制到剪贴板。', 'ok');
+      } catch (error) {
+        setStatus('复制失败，请手动选择输出内容。', 'error');
+      }
+    }
+
+    document.getElementById('formatBtn').addEventListener('click', formatJson);
+    document.getElementById('minifyBtn').addEventListener('click', minifyJson);
+    document.getElementById('escapeBtn').addEventListener('click', escapeString);
+    document.getElementById('copyBtn').addEventListener('click', copyOutput);
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      input.value = '';
+      output.textContent = '';
+      setStatus('已清空输入与输出。');
+    });
+    document.getElementById('sampleBtn').addEventListener('click', () => {
+      input.value = JSON.stringify(sample);
+      formatJson();
+    });
+
+    input.value = JSON.stringify(sample, null, 2);
+    formatJson();
+  </script>
+</body>
+</html>
