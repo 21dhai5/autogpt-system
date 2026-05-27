@@ -1,0 +1,13 @@
+{
+  "name": "week22-json-formatter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A practical JSON formatter and validator web utility for Week 22.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

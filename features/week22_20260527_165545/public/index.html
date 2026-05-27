@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON格式化器 - Week 22</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --border: #dbe3f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --success: #16a34a;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    h1,
+    h2 {
+      margin: 0 0 12px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    label,
+    .meta,
+    .status {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    select,
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    select,
+    button {
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      background: #fff;
+    }
+
+    button {
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    button.secondary:hover {
+      background: #eff6ff;
+    }
+
+    .editors {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .editor-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 360px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      resize: vertical;
+      background: #f8fafc;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .editors {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>JSON 格式化器</h1>
+      <p class="subtitle">输入原始 JSON，点击格式化即可完成校验、美化、压缩，并查看基础结构信息。这是第 22 周的 Web 实用工具实现，后端由 Node.js + Express 驱动。</p>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label for="indent">缩进空格</label>
+        <select id="indent">
+          <option value="2" selected>2</option>
+          <option value="4">4</option>
+          <option value="8">8</option>
+        </select>
+        <button id="formatBtn">格式化</button>
+        <button id="minifyBtn" class="secondary">压缩</button>
+        <button id="sampleBtn" class="secondary">加载示例</button>
+        <button id="copyBtn" class="secondary">复制结果</button>
+      </div>
+
+      <div class="editors">
+        <div class="editor-block">
+          <h2>输入</h2>
+          <textarea id="input">{"project":"Week 22","features":["format","validate","minify"],"active":true}</textarea>
+        </div>
+        <div class="editor-block">
+          <h2>输出</h2>
+          <textarea id="output" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="meta-row meta">
+        <span id="typeLabel">类型：-</span>
+        <span id="keysLabel">顶层键数：-</span>
+        <span id="lengthLabel">字符数：0</span>
+      </div>
+      <p id="status" class="status">准备就绪。</p>
+
+      <p class="footer-note">API 地址：<code>/api/format-json</code>，支持 GET 和 POST 两种方式。</p>
+    </section>
+  </div>
+
+  <script>
+    const inputEl = document.getElementById('input');
+    const outputEl = document.getElementById('output');
+    const indentEl = document.getElementById('indent');
+    const statusEl = document.getElementById('status');
+    const typeLabel = document.getElementById('typeLabel');
+    const keysLabel = document.getElementById('keysLabel');
+    const lengthLabel = document.getElementById('lengthLabel');
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.className = isError ? 'status error' : 'status success';
+    }
+
+    function updateMeta(data, text) {
+      typeLabel.textContent = `类型：${data.type ?? '-'}`;
+      keysLabel.textContent = `顶层键数：${data.keys ?? '-'}`;
+      lengthLabel.textContent = `字符数：${text.length}`;
+    }
+
+    async function sendRequest(mode) {
+      const response = await fetch('/api/format-json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          input: inputEl.value,
+          indent: indentEl.value
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || '处理失败');
+      }
+
+      const text = mode === 'minify' ? data.minified : data.formatted;
+      outputEl.value = text;
+      updateMeta(data, text);
+      setStatus(mode === 'minify' ? 'JSON 已压缩。' : 'JSON 校验通过，格式化完成。');
+    }
+
+    document.getElementById('formatBtn').addEventListener('click', async () => {
+      try {
+        await sendRequest('format');
+      } catch (error) {
+        setStatus(`错误：${error.message}`, true);
+      }
+    });
+
+    document.getElementById('minifyBtn').addEventListener('click', async () => {
+      try {
+        await sendRequest('minify');
+      } catch (error) {
+        setStatus(`错误：${error.message}`, true);
+      }
+    });
+
+    document.getElementById('sampleBtn').addEventListener('click', () => {
+      inputEl.value = JSON.stringify({
+        name: 'Week 22 Demo',
+        category: 'Web Utility',
+        features: ['formatter', 'validator', 'minifier'],
+        stats: {
+          linesSaved: 12,
+          easyToUse: true
+        }
+      });
+      setStatus('已加载示例 JSON。');
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      try {
+        if (!outputEl.value) {
+          throw new Error('当前没有可复制的结果');
+        }
+        await navigator.clipboard.writeText(outputEl.value);
+        setStatus('输出结果已复制到剪贴板。');
+      } catch (error) {
+        setStatus(`复制失败：${error.message}`, true);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+express@^4.19.2
+Node.js >= 18
+
+安装与运行：
+1. cd week22_20260527_165545
+2. npm install
+3. npm start
