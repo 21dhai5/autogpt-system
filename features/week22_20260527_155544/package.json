@@ -1,0 +1,11 @@
+{
+  "name": "week22-json-formatter",
+  "version": "1.0.0",
+  "description": "Week 22 practical web utility: JSON formatter demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["json", "formatter", "week22", "utility"],
+  "license": "MIT"
+}

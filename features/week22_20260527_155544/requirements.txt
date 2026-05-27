@@ -1,0 +1,7 @@
+# Dependencies
+
+This project uses only Node.js built-in modules, so no extra packages are required.
+
+- Runtime: Node.js 18+
+- Install: no additional install steps
+- Start command: `npm start`

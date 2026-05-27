@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON 格式化器 Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --line: #d6deeb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #0f9d58;
+      --error: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+    }
+
+    .subtext {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    button,
+    select {
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    button.secondary {
+      background: #eef2ff;
+      color: var(--primary-dark);
+      border: 1px solid #c7d2fe;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    textarea,
+    pre {
+      width: 100%;
+      min-height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      background: #f8fafc;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    textarea {
+      resize: vertical;
+      font-family: Consolas, Monaco, monospace;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #eff6ff;
+      color: var(--primary-dark);
+    }
+
+    .status.success {
+      background: #ecfdf3;
+      color: var(--success);
+    }
+
+    .status.error {
+      background: #fef2f2;
+      color: var(--error);
+    }
+
+    .usage {
+      margin-top: 24px;
+      padding: 20px;
+    }
+
+    code {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    ul {
+      padding-left: 20px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      textarea,
+      pre {
+        min-height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>JSON 格式化器</h1>
+      <p class="subtext">
+        本周任务选择了 <strong>Web 实用工具</strong> 方向，实现一个可直接运行的 JSON 格式化器。
+        该工具支持 JSON 格式化、压缩、语法校验和复制结果，适合作为前端工具类项目的基础模板。
+      </p>
+      <div class="toolbar">
+        <button id="formatBtn">格式化</button>
+        <button id="minifyBtn">压缩</button>
+        <button id="validateBtn" class="secondary">校验</button>
+        <button id="copyBtn" class="secondary">复制结果</button>
+        <label for="indentSize">缩进空格</label>
+        <select id="indentSize">
+          <option value="2">2</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>输入</h2>
+        <textarea id="input">{"week":22,"feature":"JSON格式化器","items":["格式化","压缩","校验"]}</textarea>
+      </div>
+      <div class="panel">
+        <h2>输出</h2>
+        <pre id="output">等待操作…</pre>
+        <div id="status" class="status">准备就绪，可开始处理 JSON。</div>
+      </div>
+    </section>
+
+    <section class="hero usage">
+      <h2>使用说明</h2>
+      <ul>
+        <li>点击 <code>格式化</code>：按所选缩进层级输出可读 JSON。</li>
+        <li>点击 <code>压缩</code>：去除多余空白，生成单行 JSON。</li>
+        <li>点击 <code>校验</code>：只检查 JSON 是否合法，不改变原文。</li>
+        <li>点击 <code>复制结果</code>：复制右侧输出区域内容。</li>
+        <li>启动项目：在当前目录执行 <code>npm start</code>，浏览器打开 <code>http://127.0.0.1:3000</code>。</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const indentSize = document.getElementById('indentSize');
+
+    function setStatus(message, type) {
+      status.textContent = message;
+      status.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function parseInput() {
+      return JSON.parse(input.value);
+    }
+
+    document.getElementById('formatBtn').addEventListener('click', () => {
+      try {
+        const parsed = parseInput();
+        output.textContent = JSON.stringify(parsed, null, Number(indentSize.value));
+        setStatus('格式化成功。', 'success');
+      } catch (error) {
+        output.textContent = '';
+        setStatus('格式化失败：' + error.message, 'error');
+      }
+    });
+
+    document.getElementById('minifyBtn').addEventListener('click', () => {
+      try {
+        const parsed = parseInput();
+        output.textContent = JSON.stringify(parsed);
+        setStatus('压缩成功。', 'success');
+      } catch (error) {
+        output.textContent = '';
+        setStatus('压缩失败：' + error.message, 'error');
+      }
+    });
+
+    document.getElementById('validateBtn').addEventListener('click', () => {
+      try {
+        parseInput();
+        setStatus('JSON 校验通过。', 'success');
+      } catch (error) {
+        setStatus('JSON 校验失败：' + error.message, 'error');
+      }
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.textContent);
+        setStatus('输出内容已复制到剪贴板。', 'success');
+      } catch (error) {
+        setStatus('复制失败：' + error.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
