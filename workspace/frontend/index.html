@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 3D 场景生成器 MVP</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">AI Scene to 3D</p>
+            <h1>AI 3D 场景生成器</h1>
+            <p class="panel-text">输入描述，自动生成多视角图像并重建可自由浏览的 3D 场景。</p>
+          </div>
+        </div>
+
+        <section class="panel-block">
+          <h2>创建场景</h2>
+          <form id="scene-form" class="scene-form">
+            <label>
+              <span>场景描述</span>
+              <textarea id="prompt" name="prompt" rows="5" placeholder="例如：云海之上的未来研究站，晨曦穿过玻璃穹顶"></textarea>
+            </label>
+
+            <div class="inline-grid">
+              <label>
+                <span>风格</span>
+                <select id="style" name="style">
+                  <option value="cinematic">Cinematic</option>
+                  <option value="stylized">Stylized</option>
+                  <option value="photoreal">Photoreal</option>
+                </select>
+              </label>
+
+              <label>
+                <span>分辨率</span>
+                <select id="resolution" name="resolution">
+                  <option value="512">512</option>
+                  <option value="768">768</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="actions">
+              <button id="generate-btn" type="submit" class="primary">生成 3D 场景</button>
+              <button id="sample-btn" type="button">填入示例</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel-block">
+          <div class="section-heading">
+            <h2>已保存场景</h2>
+            <button id="refresh-scenes" type="button">刷新</button>
+          </div>
+          <div id="scene-list" class="scene-list"></div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="hero panel">
+          <div>
+            <p class="eyebrow">导出</p>
+            <div class="export-actions">
+              <button id="export-json" type="button" disabled>导出 JSON</button>
+              <button id="export-ply" type="button" disabled>导出 PLY 点云</button>
+              <button id="capture-image" type="button" disabled>导出当前视图 PNG</button>
+            </div>
+            <p class="panel-text">MVP 已实现图像与 3D 点云/几何导出；视频导出可在后续版本中通过离屏渲染扩展。</p>
+          </div>
+          <div class="hero-status">
+            <h2 id="scene-title">尚未加载场景</h2>
+            <p id="scene-meta">创建后将在这里显示多视角生成结果与 3D 重建信息。</p>
+            <span id="status-badge" class="status-badge">准备就绪</span>
+          </div>
+        </section>
+
+        <section class="viewer-grid">
+          <article class="panel viewer-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">3D 浏览器</p>
+                <h3>鼠标左键旋转 / 滚轮缩放 / 右键平移</h3>
+              </div>
+            </div>
+            <div id="viewer-container" class="viewer-container"></div>
+          </article>
+
+          <article class="panel info-panel">
+            <section>
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">多视角图像</p>
+                </div>
+              </div>
+              <div id="views-grid" class="views-grid"></div>
+            </section>
+
+            <section>
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">重建摘要</p>
+                </div>
+              </div>
+              <dl id="reconstruction-stats" class="stats-grid"></dl>
+            </section>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
