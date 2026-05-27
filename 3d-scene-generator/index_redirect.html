@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset=UTF-8>
+    <meta name=viewport content=width=device-width, initial-scale=1.0>
+    <title>3D场景生成系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+        }
+        h1 { font-size: 48px; margin-bottom: 20px; }
+        .subtitle { font-size: 20px; opacity: 0.9; margin-bottom: 40px; }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .feature h3 { margin-bottom: 10px; }
+        .buttons { margin-top: 40px; }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+        }
+        .tech-stack {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .tech-tag {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 3D场景生成系统</h1>
+        <p class="subtitle">AI驱动的3D场景生成和浏览平台</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🖼️ AI多视角生成</h3>
+                <p>输入场景描述，AI自动生成多个视角的图像</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 3D场景重建</h3>
+                <p>将2D图像转换为可交互的3D场景</p>
+            </div>
+            <div class="feature">
+                <h3>🎮 自由摄像机</h3>
+                <p>旋转、缩放、平移，从任意角度观看</p>
+            </div>
+            <div class="feature">
+                <h3>💾 场景管理</h3>
+                <p>保存、加载、导出你的3D场景</p>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <a href="frontend/index.html" class="btn">🚀 启动应用</a>
+            <a href="ARCHITECTURE_PLAN.md" class="btn btn-secondary">📖 架构文档</a>
+            <a href="README.md" class="btn btn-secondary">📝 使用说明</a>
+        </div>
+        
+        <div class="tech-stack">
+            <h3>技术栈</h3>
+            <div>
+                <span class="tech-tag">Three.js</span>
+                <span class="tech-tag">FastAPI</span>
+                <span class="tech-tag">AI生图API</span>
+                <span class="tech-tag">3D重建</span>
+                <span class="tech-tag">深度估计</span>
+            </div>
+        </div>
+        
+        <p style="margin-top: 40px; opacity: 0.7;">
+            🤖 由 AutoGPT 自动开发 | 2026-05-27
+        </p>
+    </div>
+</body>
+</html>
